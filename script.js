@@ -107,3 +107,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
   type();
 });
+
+function updateWorldClock() {
+    const now = new Date();
+
+    document.getElementById("utcTime").textContent =
+        now.toLocaleTimeString("en-GB", {
+            timeZone: "UTC",
+            hour12: false
+        });
+
+    document.getElementById("jstTime").textContent =
+        now.toLocaleTimeString("en-GB", {
+            timeZone: "Asia/Tokyo",
+            hour12: false
+        });
+
+    document.getElementById("istTime").textContent =
+        now.toLocaleTimeString("en-GB", {
+            timeZone: "Asia/Kolkata",
+            hour12: false
+        });
+}
+
+updateWorldClock();
+setInterval(updateWorldClock, 1000);
