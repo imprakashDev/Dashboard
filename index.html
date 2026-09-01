@@ -80,22 +80,105 @@
             <i class="fa-solid fa-right-to-bracket me-2"></i>
             Open Darwinbox
           </a>
-          <div class="timezone-bar mt-4 bg-dark  py-3" style="
-    border-radius: 10px;
-">
-    <div class="timezone-item">
-        <span class="timezone-label">UTC</span>
-        <span id="utcTime" class="timezone-time">07:33:58</span>
+<div class="dashboard-info-row mt-4">
+
+    <!-- Timezone Card -->
+    <div class="dashboard-info-card bg-dark">
+
+        <div class="card-header">
+            <i class="fa-solid fa-clock"></i>
+            <span>World Time</span>
+        </div>
+
+        <div class="timezone-bar">
+            <div class="timezone-item">
+                <span class="timezone-label">UTC</span>
+                <span id="utcTime" class="timezone-time">--:--:--</span>
+            </div>
+
+            <div class="timezone-item">
+                <span class="timezone-label">JST</span>
+                <span id="jstTime" class="timezone-time">--:--:--</span>
+            </div>
+
+            <div class="timezone-item">
+                <span class="timezone-label">IST</span>
+                <span id="istTime" class="timezone-time">--:--:--</span>
+            </div>
+        </div>
+
     </div>
 
-    <div class="timezone-item">
-        <span class="timezone-label">JST</span>
-        <span id="jstTime" class="timezone-time">16:33:58</span>
-    </div>
 
-    <div class="timezone-item">
-        <span class="timezone-label">IST</span>
-        <span id="istTime" class="timezone-time">13:03:58</span>
+    <!-- Weather Card -->
+    <div class="dashboard-info-card bg-dark">
+
+        <div class="card-header">
+            <i class="fa-solid fa-cloud-sun"></i>
+            <span>Weather</span>
+        </div>
+
+        <!-- Location Permission -->
+        <div id="weatherLoading" class="weather-status">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>Getting your location...</span>
+        </div>
+
+        <!-- Weather Content -->
+        <div id="weatherContent" class="weather-content d-none">
+
+            <div class="weather-location">
+                <i class="fa-solid fa-location-dot"></i>
+                <span id="weatherLocation">--</span>
+            </div>
+
+            <div class="weather-main">
+
+                <div class="weather-icon">
+                    <i id="weatherIcon" class="fa-solid fa-sun"></i>
+                </div>
+
+                <div>
+                    <div id="weatherTemp" class="weather-temp">
+                        --°C
+                    </div>
+
+                    <div id="weatherCondition" class="weather-condition">
+                        --
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="weather-details">
+
+                <div>
+                    <span>Feels like</span>
+                    <strong id="feelsLike">--°C</strong>
+                </div>
+
+                <div>
+                    <span>Humidity</span>
+                    <strong id="humidity">--%</strong>
+                </div>
+
+                <div>
+                    <span>Wind</span>
+                    <strong id="windSpeed">-- km/h</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Location Error -->
+        <div id="weatherError" class="weather-status d-none">
+            <i class="fa-solid fa-location-crosshairs"></i>
+            <span id="weatherErrorMessage">
+                Location access is required to show weather.
+            </span>
+        </div>
+
     </div>
 </div>
         </div>
