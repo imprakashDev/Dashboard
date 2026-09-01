@@ -1,37 +1,33 @@
-// ======================================================
-// DASHBOARD SCRIPT
-// ======================================================
+// ============================================================
+// script.js
+// ============================================================
 
 document.addEventListener("DOMContentLoaded", function () {
 
-```
-// Initialize all dashboard features
+
+console.log("Dashboard JavaScript loaded successfully.");
+
+// Initialize dashboard features
 initializeTheme();
 initializeTypewriter();
-updateWorldClock();
-loadWeather();
+initializeWorldClock();
+initializeWeather();
 
-// Update clock every second
-setInterval(updateWorldClock, 1000);
-
-// Refresh weather every 15 minutes
-setInterval(loadWeather, 15 * 60 * 1000);
-```
 
 });
 
-// ======================================================
+// ============================================================
 // DARK MODE
-// ======================================================
+// ============================================================
 
 function initializeTheme() {
 
-```
+
 const themeToggle =
     document.getElementById("themeToggle");
 
 if (!themeToggle) {
-    console.warn("Theme button not found.");
+    console.warn("Theme toggle button not found.");
     return;
 }
 
@@ -39,9 +35,7 @@ themeToggle.addEventListener("click", function () {
 
     document.body.classList.toggle("dark-mode");
 
-    if (
-        document.body.classList.contains("dark-mode")
-    ) {
+    if (document.body.classList.contains("dark-mode")) {
 
         themeToggle.innerHTML = "☀️";
 
@@ -52,82 +46,111 @@ themeToggle.addEventListener("click", function () {
     }
 
 });
-```
+
 
 }
 
-// ======================================================
+// ============================================================
 // COPY URL
-// ======================================================
+// ============================================================
 
 function copyUrl(button) {
 
-```
-if (!button) return;
 
-const input =
-    button.parentElement.querySelector(
-        ".url-input"
-    );
-
-if (!input) return;
-
-
-navigator.clipboard
-    .writeText(input.value)
-    .then(function () {
-
-        const originalHtml =
-            button.innerHTML;
-
-        button.innerHTML =
-            '<i class="fa-solid fa-check"></i>';
-
-        button.classList.add("copied");
-
-
-        setTimeout(function () {
-
-            button.innerHTML =
-                originalHtml;
-
-            button.classList.remove(
-                "copied"
-            );
-
-        }, 1500);
-
-    })
-    .catch(function (error) {
-
-        console.error(
-            "Copy failed:",
-            error
-        );
-
-    });
-```
-
-}
-
-// ======================================================
-// TYPEWRITER
-// ======================================================
-
-function initializeTypewriter() {
-
-```
-const typedTextSpan =
-    document.querySelector(
-        ".typed-text"
-    );
-
-if (!typedTextSpan) {
+if (!button) {
     return;
 }
 
+const input =
+    button.parentElement.querySelector(".url-input");
 
-const textArray = [
+if (!input) {
+    return;
+}
+
+if (
+    navigator.clipboard &&
+    navigator.clipboard.writeText
+) {
+
+    navigator.clipboard.writeText(input.value)
+        .then(function () {
+
+            showCopySuccess(button);
+
+        })
+        .catch(function () {
+
+            fallbackCopy(input, button);
+
+        });
+
+} else {
+
+    fallbackCopy(input, button);
+
+}
+
+
+}
+
+function fallbackCopy(input, button) {
+
+
+input.select();
+
+document.execCommand("copy");
+
+showCopySuccess(button);
+
+
+}
+
+function showCopySuccess(button) {
+
+
+const originalHtml =
+    button.innerHTML;
+
+button.innerHTML =
+    '<i class="fa-solid fa-check"></i>';
+
+button.classList.add("copied");
+
+setTimeout(function () {
+
+    button.innerHTML =
+        originalHtml;
+
+    button.classList.remove("copied");
+
+}, 1500);
+
+
+}
+
+// ============================================================
+// TYPEWRITER
+// ============================================================
+
+function initializeTypewriter() {
+
+
+const typedText =
+    document.querySelector(".typed-text");
+
+if (!typedText) {
+
+    console.warn(
+        "Element .typed-text not found."
+    );
+
+    return;
+
+}
+
+
+const messages = [
 
     "Hi, Prakash 👋",
 
@@ -138,82 +161,101 @@ const textArray = [
 ];
 
 
-const typingDelay = 100;
+let messageIndex = 0;
 
-const erasingDelay = 50;
+let characterIndex = 0;
 
-const newTextDelay = 2000;
-
-
-let textArrayIndex = 0;
-
-let charIndex = 0;
+let isDeleting = false;
 
 
-function type() {
+const typingSpeed = 100;
 
-    if (
-        charIndex <
-        textArray[textArrayIndex].length
-    ) {
+const deletingSpeed = 50;
 
-        typedTextSpan.textContent +=
-            textArray[textArrayIndex]
-                .charAt(charIndex);
+const pauseAfterTyping = 2000;
 
-        charIndex++;
-
-        setTimeout(
-            type,
-            typingDelay
-        );
-
-    } else {
-
-        setTimeout(
-            erase,
-            newTextDelay
-        );
-
-    }
-
-}
+const pauseAfterDeleting = 500;
 
 
-function erase() {
+function typeWriter() {
 
-    if (charIndex > 0) {
+    const currentMessage =
+        messages[messageIndex];
 
-        typedTextSpan.textContent =
-            textArray[textArrayIndex]
-                .substring(
-                    0,
-                    charIndex - 1
-                );
 
-        charIndex--;
+    if (!isDeleting) {
 
-        setTimeout(
-            erase,
-            erasingDelay
-        );
+        typedText.textContent =
+            currentMessage.substring(
+                0,
+                characterIndex + 1
+            );
 
-    } else {
+        characterIndex++;
 
-        textArrayIndex++;
 
         if (
-            textArrayIndex >=
-            textArray.length
+            characterIndex ===
+            currentMessage.length
         ) {
 
-            textArrayIndex = 0;
+            isDeleting = true;
+
+            setTimeout(
+                typeWriter,
+                pauseAfterTyping
+            );
+
+            return;
 
         }
 
+
         setTimeout(
-            type,
-            typingDelay + 300
+            typeWriter,
+            typingSpeed
+        );
+
+
+    } else {
+
+        typedText.textContent =
+            currentMessage.substring(
+                0,
+                characterIndex - 1
+            );
+
+        characterIndex--;
+
+
+        if (characterIndex === 0) {
+
+            isDeleting = false;
+
+            messageIndex++;
+
+            if (
+                messageIndex >=
+                messages.length
+            ) {
+
+                messageIndex = 0;
+
+            }
+
+            setTimeout(
+                typeWriter,
+                pauseAfterDeleting
+            );
+
+            return;
+
+        }
+
+
+        setTimeout(
+            typeWriter,
+            deletingSpeed
         );
 
     }
@@ -221,125 +263,130 @@ function erase() {
 }
 
 
-type();
-```
+typeWriter();
+
 
 }
 
-// ======================================================
+// ============================================================
 // WORLD CLOCK
-// ======================================================
+// ============================================================
+
+function initializeWorldClock() {
+
+ 
+console.log(
+    "Initializing world clock..."
+);
+
+
+// Update immediately
+
+updateWorldClock();
+
+
+// Update every second
+
+setInterval(
+    updateWorldClock,
+    1000
+);
+ 
+
+}
 
 function updateWorldClock() {
 
-```
-const now = new Date();
-
-
-const utcElement =
-    document.getElementById(
-        "utcTime"
-    );
-
-const jstElement =
-    document.getElementById(
-        "jstTime"
-    );
-
-const istElement =
-    document.getElementById(
-        "istTime"
-    );
+ 
+const now =
+    new Date();
 
 
 // UTC
 
+const utcElement =
+    document.getElementById("utcTime");
+
 if (utcElement) {
 
     utcElement.textContent =
-        now.toLocaleTimeString(
-            "en-GB",
-            {
-                timeZone: "UTC",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: false
-            }
+        formatTime(
+            now,
+            "UTC"
         );
 
 }
 
 
-// JST - Japan
+// JST
+
+const jstElement =
+    document.getElementById("jstTime");
 
 if (jstElement) {
 
     jstElement.textContent =
-        now.toLocaleTimeString(
-            "en-GB",
-            {
-                timeZone: "Asia/Tokyo",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: false
-            }
+        formatTime(
+            now,
+            "Asia/Tokyo"
         );
 
 }
 
 
-// IST - India
+// IST
+
+const istElement =
+    document.getElementById("istTime");
 
 if (istElement) {
 
     istElement.textContent =
-        now.toLocaleTimeString(
-            "en-GB",
-            {
-                timeZone: "Asia/Kolkata",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: false
-            }
+        formatTime(
+            now,
+            "Asia/Kolkata"
         );
 
 }
-```
+ 
 
 }
 
-// ======================================================
+function formatTime(
+date,
+timezone
+) {
+
+ 
+return date.toLocaleTimeString(
+    "en-GB",
+    {
+        timeZone: timezone,
+
+        hour: "2-digit",
+
+        minute: "2-digit",
+
+        second: "2-digit",
+
+        hour12: false
+    }
+);
+ 
+
+}
+
+// ============================================================
 // WEATHER
-// ======================================================
+// ============================================================
 
-function loadWeather() {
+function initializeWeather() {
 
-```
+ 
 console.log(
-    "Starting weather request..."
+    "Initializing weather..."
 );
 
-
-const loading =
-    document.getElementById(
-        "weatherLoading"
-    );
-
-const content =
-    document.getElementById(
-        "weatherContent"
-    );
-
-const error =
-    document.getElementById(
-        "weatherError"
-    );
-
-
-// Check browser support
 
 if (!navigator.geolocation) {
 
@@ -352,12 +399,10 @@ if (!navigator.geolocation) {
 }
 
 
-// Check secure context
-
 if (!window.isSecureContext) {
 
     showWeatherError(
-        "Location requires HTTPS or localhost."
+        "Weather location requires HTTPS or localhost."
     );
 
     console.error(
@@ -369,55 +414,52 @@ if (!window.isSecureContext) {
 }
 
 
-// Show loading
+requestUserLocation();
+ 
 
-if (loading) {
-    loading.classList.remove(
-        "d-none"
-    );
 }
 
-if (content) {
-    content.classList.add(
-        "d-none"
-    );
-}
+function requestUserLocation() {
 
-if (error) {
-    error.classList.add(
-        "d-none"
-    );
-}
-
-
+ 
 console.log(
-    "Requesting browser location..."
+    "Requesting user location..."
 );
+
+
+showWeatherLoading();
 
 
 navigator.geolocation.getCurrentPosition(
 
-    // ==========================================
-    // SUCCESS
-    // ==========================================
-
     function (position) {
+
+        console.log(
+            "Location permission granted."
+        );
+
 
         const latitude =
             position.coords.latitude;
+
 
         const longitude =
             position.coords.longitude;
 
 
         console.log(
-            "Location received:",
-            latitude,
+            "Latitude:",
+            latitude
+        );
+
+
+        console.log(
+            "Longitude:",
             longitude
         );
 
 
-        fetchWeather(
+        getWeather(
             latitude,
             longitude
         );
@@ -425,21 +467,17 @@ navigator.geolocation.getCurrentPosition(
     },
 
 
-    // ==========================================
-    // ERROR
-    // ==========================================
-
-    function (geoError) {
+    function (error) {
 
         console.error(
-            "Geolocation error:",
-            geoError
+            "Location error:",
+            error
         );
 
 
         if (
-            geoError.code ===
-            geoError.PERMISSION_DENIED
+            error.code ===
+            1
         ) {
 
             showWeatherError(
@@ -449,8 +487,8 @@ navigator.geolocation.getCurrentPosition(
         }
 
         else if (
-            geoError.code ===
-            geoError.POSITION_UNAVAILABLE
+            error.code ===
+            2
         ) {
 
             showWeatherError(
@@ -460,12 +498,12 @@ navigator.geolocation.getCurrentPosition(
         }
 
         else if (
-            geoError.code ===
-            geoError.TIMEOUT
+            error.code ===
+            3
         ) {
 
             showWeatherError(
-                "Location request timed out. Please try again."
+                "Location request timed out."
             );
 
         }
@@ -481,11 +519,8 @@ navigator.geolocation.getCurrentPosition(
     },
 
 
-    // ==========================================
-    // OPTIONS
-    // ==========================================
-
     {
+
         enableHighAccuracy: false,
 
         timeout: 15000,
@@ -495,28 +530,28 @@ navigator.geolocation.getCurrentPosition(
     }
 
 );
-```
+ 
 
 }
 
-// ======================================================
-// FETCH WEATHER FROM OPEN-METEO
-// ======================================================
+// ============================================================
+// GET WEATHER
+// ============================================================
 
-async function fetchWeather(
+async function getWeather(
 latitude,
 longitude
 ) {
 
-```
+ 
+console.log(
+    "Requesting weather data..."
+);
+
+
 try {
 
-    console.log(
-        "Fetching weather data..."
-    );
-
-
-    const weatherUrl =
+    const url =
         "https://api.open-meteo.com/v1/forecast" +
         "?latitude=" + latitude +
         "&longitude=" + longitude +
@@ -530,19 +565,19 @@ try {
 
 
     console.log(
-        "Weather API:",
-        weatherUrl
+        "Weather URL:",
+        url
     );
 
 
     const response =
-        await fetch(weatherUrl);
+        await fetch(url);
 
 
     if (!response.ok) {
 
         throw new Error(
-            "Weather API returned HTTP " +
+            "Weather API HTTP " +
             response.status
         );
 
@@ -554,17 +589,17 @@ try {
 
 
     console.log(
-        "Weather data received:",
+        "Weather data:",
         data
     );
 
 
-    updateWeather(data);
+    displayWeather(data);
 
 
-    // Reverse geocoding
+    // Get readable city name
 
-    getLocationName(
+    getCityName(
         latitude,
         longitude
     );
@@ -574,7 +609,7 @@ try {
 catch (error) {
 
     console.error(
-        "Weather API error:",
+        "Weather request failed:",
         error
     );
 
@@ -584,24 +619,24 @@ catch (error) {
     );
 
 }
-```
+ 
 
 }
 
-// ======================================================
-// UPDATE WEATHER UI
-// ======================================================
+// ============================================================
+// DISPLAY WEATHER
+// ============================================================
 
-function updateWeather(data) {
+function displayWeather(data) {
 
-```
+ 
 if (
     !data ||
     !data.current
 ) {
 
     showWeatherError(
-        "Weather data is unavailable."
+        "Weather information unavailable."
     );
 
     return;
@@ -609,7 +644,7 @@ if (
 }
 
 
-const current =
+const weather =
     data.current;
 
 
@@ -624,7 +659,7 @@ if (temperature) {
 
     temperature.textContent =
         Math.round(
-            current.temperature_2m
+            weather.temperature_2m
         ) + "°C";
 
 }
@@ -641,7 +676,7 @@ if (feelsLike) {
 
     feelsLike.textContent =
         Math.round(
-            current.apparent_temperature
+            weather.apparent_temperature
         ) + "°C";
 
 }
@@ -657,7 +692,7 @@ const humidity =
 if (humidity) {
 
     humidity.textContent =
-        current.relative_humidity_2m +
+        weather.relative_humidity_2m +
         "%";
 
 }
@@ -674,17 +709,17 @@ if (wind) {
 
     wind.textContent =
         Math.round(
-            current.wind_speed_10m
+            weather.wind_speed_10m
         ) + " km/h";
 
 }
 
 
-// Weather description
+// Weather condition
 
-const weather =
-    getWeatherDescription(
-        current.weather_code
+const weatherInfo =
+    getWeatherInfo(
+        weather.weather_code
     );
 
 
@@ -696,7 +731,7 @@ const condition =
 if (condition) {
 
     condition.textContent =
-        weather.description;
+        weatherInfo.description;
 
 }
 
@@ -712,7 +747,7 @@ if (icon) {
 
     icon.className =
         "fa-solid " +
-        weather.icon;
+        weatherInfo.icon;
 
 }
 
@@ -749,7 +784,7 @@ if (error) {
 }
 
 
-// Show content
+// Show weather
 
 const content =
     document.getElementById(
@@ -763,114 +798,17 @@ if (content) {
     );
 
 }
-```
+ 
 
 }
 
-// ======================================================
-// REVERSE GEOCODING
-// ======================================================
+// ============================================================
+// WEATHER CODE
+// ============================================================
 
-async function getLocationName(
-latitude,
-longitude
-) {
+function getWeatherInfo(code) {
 
-```
-try {
-
-    const url =
-        "https://nominatim.openstreetmap.org/reverse" +
-        "?lat=" + latitude +
-        "&lon=" + longitude +
-        "&format=json";
-
-
-    const response =
-        await fetch(url);
-
-
-    if (!response.ok) {
-
-        throw new Error(
-            "Location lookup failed."
-        );
-
-    }
-
-
-    const data =
-        await response.json();
-
-
-    const address =
-        data.address || {};
-
-
-    const city =
-        address.city ||
-        address.town ||
-        address.village ||
-        address.municipality ||
-        address.county ||
-        "Current Location";
-
-
-    const country =
-        address.country ||
-        "";
-
-
-    const location =
-        document.getElementById(
-            "weatherLocation"
-        );
-
-
-    if (location) {
-
-        location.textContent =
-            country
-                ? city + ", " + country
-                : city;
-
-    }
-
-}
-catch (error) {
-
-    console.error(
-        "Reverse geocoding error:",
-        error
-    );
-
-
-    const location =
-        document.getElementById(
-            "weatherLocation"
-        );
-
-
-    if (location) {
-
-        location.textContent =
-            "Current Location";
-
-    }
-
-}
-```
-
-}
-
-// ======================================================
-// WEATHER CODE → DESCRIPTION + ICON
-// ======================================================
-
-function getWeatherDescription(code) {
-
-```
-const weatherMap = {
+const weatherCodes = {
 
     0: {
         description: "Clear Sky",
@@ -947,11 +885,6 @@ const weatherMap = {
         icon: "fa-snowflake"
     },
 
-    77: {
-        description: "Snow Grains",
-        icon: "fa-snowflake"
-    },
-
     80: {
         description: "Rain Showers",
         icon: "fa-cloud-showers-heavy"
@@ -986,22 +919,177 @@ const weatherMap = {
 
 
 return (
-    weatherMap[code] || {
+    weatherCodes[code] || {
         description: "Unknown",
         icon: "fa-cloud"
     }
 );
-```
+
 
 }
 
-// ======================================================
+// ============================================================
+// GET CITY NAME
+// ============================================================
+
+async function getCityName(
+latitude,
+longitude
+) {
+
+try {
+
+    const url =
+        "https://nominatim.openstreetmap.org/reverse" +
+        "?lat=" + latitude +
+        "&lon=" + longitude +
+        "&format=json";
+
+
+    const response =
+        await fetch(url);
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            "Reverse geocoding failed."
+        );
+
+    }
+
+
+    const data =
+        await response.json();
+
+
+    const address =
+        data.address || {};
+
+
+    const city =
+        address.city ||
+        address.town ||
+        address.village ||
+        address.municipality ||
+        address.county ||
+        "Current Location";
+
+
+    const country =
+        address.country ||
+        "";
+
+
+    const location =
+        document.getElementById(
+            "weatherLocation"
+        );
+
+
+    if (location) {
+
+        location.textContent =
+            country
+                ? city + ", " + country
+                : city;
+
+    }
+
+}
+catch (error) {
+
+    console.warn(
+        "Could not determine city name:",
+        error
+    );
+
+
+    const location =
+        document.getElementById(
+            "weatherLocation"
+        );
+
+
+    if (location) {
+
+        location.textContent =
+            "Current Location";
+
+    }
+
+}
+
+
+}
+
+// ============================================================
+// WEATHER LOADING
+// ============================================================
+
+function showWeatherLoading() {
+
+
+const loading =
+    document.getElementById(
+        "weatherLoading"
+    );
+
+const content =
+    document.getElementById(
+        "weatherContent"
+    );
+
+const error =
+    document.getElementById(
+        "weatherError"
+    );
+
+
+if (loading) {
+
+    loading.classList.remove(
+        "d-none"
+    );
+
+}
+
+
+if (content) {
+
+    content.classList.add(
+        "d-none"
+    );
+
+}
+
+
+if (error) {
+
+    error.classList.add(
+        "d-none"
+    );
+
+}
+
+
+}
+
+// ============================================================
 // WEATHER ERROR
-// ======================================================
+// ============================================================
 
-function showWeatherError(message) {
+function showWeatherError(
+message
+) {
 
-```
+
+console.error(
+    "Weather:",
+    message
+);
+
+
 const loading =
     document.getElementById(
         "weatherLoading"
@@ -1056,6 +1144,5 @@ if (errorMessage) {
         message;
 
 }
-```
 
 }
