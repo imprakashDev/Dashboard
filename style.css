@@ -1,1147 +1,799 @@
-// ============================================================
-// script.js
-// ============================================================
+/* =========================================================
+GLOBAL VARIABLES
+========================================================= */
 
-document.addEventListener("DOMContentLoaded", function () {
+:root {
+--bg-color: #f4f7fb;
+--card-bg: #ffffff;
+--text-color: #1f2937;
+--sub-text: #6b7280;
+--primary: #2563eb;
 
+--card-radius: 22px;
+--small-radius: 10px;
 
-console.log("Dashboard JavaScript loaded successfully.");
+--shadow:
+0 10px 30px rgba(0, 0, 0, 0.08);
 
-// Initialize dashboard features
-initializeTheme();
-initializeTypewriter();
-initializeWorldClock();
-initializeWeather();
-
-
-});
-
-// ============================================================
-// DARK MODE
-// ============================================================
-
-function initializeTheme() {
-
-
-const themeToggle =
-    document.getElementById("themeToggle");
-
-if (!themeToggle) {
-    console.warn("Theme toggle button not found.");
-    return;
+--shadow-hover:
+0 18px 40px rgba(0, 0, 0, 0.12);
 }
 
-themeToggle.addEventListener("click", function () {
+/* =========================================================
+DARK MODE
+========================================================= */
 
-    document.body.classList.toggle("dark-mode");
+body.dark-mode {
+--bg-color: #0f172a;
+--card-bg: #111827;
+--text-color: #f8fafc;
+--sub-text: #cbd5e1;
+--primary: #3b82f6;
 
-    if (document.body.classList.contains("dark-mode")) {
+--shadow:
+0 10px 30px rgba(0, 0, 0, 0.30);
 
-        themeToggle.innerHTML = "☀️";
-
-    } else {
-
-        themeToggle.innerHTML = "🌙";
-
-    }
-
-});
-
-
+--shadow-hover:
+0 18px 40px rgba(0, 0, 0, 0.40);
 }
 
-// ============================================================
-// COPY URL
-// ============================================================
+/* =========================================================
+BODY
+========================================================= */
 
-function copyUrl(button) {
+body {
+background: var(--bg-color);
+color: var(--text-color);
 
+font-family:
+"Segoe UI",
+Arial,
+sans-serif;
 
-if (!button) {
-    return;
+margin: 0;
+
+transition:
+background-color 0.3s ease,
+color 0.3s ease;
 }
 
-const input =
-    button.parentElement.querySelector(".url-input");
-
-if (!input) {
-    return;
-}
-
-if (
-    navigator.clipboard &&
-    navigator.clipboard.writeText
-) {
-
-    navigator.clipboard.writeText(input.value)
-        .then(function () {
-
-            showCopySuccess(button);
-
-        })
-        .catch(function () {
-
-            fallbackCopy(input, button);
-
-        });
-
-} else {
-
-    fallbackCopy(input, button);
-
-}
-
-
-}
-
-function fallbackCopy(input, button) {
-
-
-input.select();
-
-document.execCommand("copy");
-
-showCopySuccess(button);
-
-
-}
-
-function showCopySuccess(button) {
-
-
-const originalHtml =
-    button.innerHTML;
-
-button.innerHTML =
-    '<i class="fa-solid fa-check"></i>';
-
-button.classList.add("copied");
-
-setTimeout(function () {
-
-    button.innerHTML =
-        originalHtml;
-
-    button.classList.remove("copied");
-
-}, 1500);
-
-
-}
-
-// ============================================================
-// TYPEWRITER
-// ============================================================
-
-function initializeTypewriter() {
-
-
-const typedText =
-    document.querySelector(".typed-text");
-
-if (!typedText) {
-
-    console.warn(
-        "Element .typed-text not found."
-    );
-
-    return;
-
-}
-
-
-const messages = [
-
-    "Hi, Prakash 👋",
-
-    "Welcome to Dashboard",
-
-    "Manage Everything Faster"
-
-];
-
-
-let messageIndex = 0;
-
-let characterIndex = 0;
-
-let isDeleting = false;
-
-
-const typingSpeed = 100;
-
-const deletingSpeed = 50;
-
-const pauseAfterTyping = 2000;
-
-const pauseAfterDeleting = 500;
-
-
-function typeWriter() {
-
-    const currentMessage =
-        messages[messageIndex];
-
-
-    if (!isDeleting) {
-
-        typedText.textContent =
-            currentMessage.substring(
-                0,
-                characterIndex + 1
-            );
-
-        characterIndex++;
-
-
-        if (
-            characterIndex ===
-            currentMessage.length
-        ) {
-
-            isDeleting = true;
-
-            setTimeout(
-                typeWriter,
-                pauseAfterTyping
-            );
-
-            return;
-
-        }
-
-
-        setTimeout(
-            typeWriter,
-            typingSpeed
-        );
-
-
-    } else {
-
-        typedText.textContent =
-            currentMessage.substring(
-                0,
-                characterIndex - 1
-            );
-
-        characterIndex--;
-
-
-        if (characterIndex === 0) {
-
-            isDeleting = false;
-
-            messageIndex++;
-
-            if (
-                messageIndex >=
-                messages.length
-            ) {
-
-                messageIndex = 0;
-
-            }
-
-            setTimeout(
-                typeWriter,
-                pauseAfterDeleting
-            );
-
-            return;
-
-        }
-
-
-        setTimeout(
-            typeWriter,
-            deletingSpeed
-        );
-
-    }
-
-}
-
-
-typeWriter();
-
-
-}
-
-// ============================================================
-// WORLD CLOCK
-// ============================================================
-
-function initializeWorldClock() {
-
- 
-console.log(
-    "Initializing world clock..."
+/* =========================================================
+NAVBAR
+========================================================= */
+
+.navbar-custom {
+background:
+linear-gradient(
+90deg,
+#2563eb,
+#1d4ed8
 );
 
+padding: 15px 0;
 
-// Update immediately
+box-shadow:
+0 8px 25px rgba(0, 0, 0, 0.1);
+}
 
-updateWorldClock();
+.navbar-custom .navbar-brand {
+letter-spacing: 0.2px;
+}
 
+.theme-btn {
+min-width: 38px;
+min-height: 32px;
+border-radius: 8px;
+}
 
-// Update every second
+/* =========================================================
+HERO
+========================================================= */
 
-setInterval(
-    updateWorldClock,
-    1000
-);
- 
+.hero-section {
+padding: 60px 0;
+}
+
+.hero-card {
+text-align: center;
+}
+
+.dashboard-title {
+font-size: 2.8rem;
+font-weight: 700;
+line-height: 1.2;
+margin-bottom: 0;
+}
+
+.typed-text {
+color: var(--primary);
+}
+
+.cursor {
+animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+
+50% {
+opacity: 0;
+}
 
 }
 
-function updateWorldClock() {
+/* =========================================================
+COMMON GLASS CARD
+========================================================= */
 
- 
-const now =
-    new Date();
+.glass-card {
+background: var(--card-bg);
 
+border-radius: var(--card-radius);
 
-// UTC
+padding: 25px;
 
-const utcElement =
-    document.getElementById("utcTime");
+height: 100%;
 
-if (utcElement) {
+box-shadow: var(--shadow);
 
-    utcElement.textContent =
-        formatTime(
-            now,
-            "UTC"
-        );
+transition:
+transform 0.3s ease,
+box-shadow 0.3s ease,
+background-color 0.3s ease;
+
+animation:
+fadeUp 0.7s ease;
+}
+
+.glass-card:hover {
+transform: translateY(-8px);
+box-shadow: var(--shadow-hover);
+}
+
+/* =========================================================
+DASHBOARD INFO CARDS
+WORLD TIME + WEATHER
+========================================================= */
+
+.dashboard-info-row {
+
+display: grid;
+
+grid-template-columns:
+repeat(2, minmax(0, 1fr));
+
+gap: 15px;
+
+align-items: stretch;
+}
+
+.dashboard-info-card {
+
+background: #111827;
+
+border-radius: var(--small-radius);
+
+padding: 18px;
+
+min-height: 155px;
+
+color: #ffffff;
+
+display: flex;
+
+flex-direction: column;
+
+box-sizing: border-box;
+
+transition:
+transform 0.3s ease,
+box-shadow 0.3s ease;
+}
+
+.dashboard-info-card:hover {
+
+transform: translateY(-3px);
+
+box-shadow:
+0 12px 30px rgba(0, 0, 0, 0.20);
 
 }
 
+/* =========================================================
+INFO CARD HEADER
+========================================================= */
 
-// JST
+.card-header {
 
-const jstElement =
-    document.getElementById("jstTime");
+display: flex;
 
-if (jstElement) {
+align-items: center;
 
-    jstElement.textContent =
-        formatTime(
-            now,
-            "Asia/Tokyo"
-        );
+justify-content: center;
+
+gap: 8px;
+
+font-size: 14px;
+
+font-weight: 600;
+
+color: rgba(255, 255, 255, 0.90);
+
+margin-bottom: 15px;
+
+background: transparent;
+
+border: 0;
+
+padding: 0;
+}
+
+.card-header i {
+
+font-size: 15px;
+
+color: #60a5fa;
 
 }
 
+/* =========================================================
+WORLD TIME
+========================================================= */
 
-// IST
+.timezone-bar {
 
-const istElement =
-    document.getElementById("istTime");
+display: grid;
 
-if (istElement) {
+grid-template-columns:
+repeat(3, 1fr);
 
-    istElement.textContent =
-        formatTime(
-            now,
-            "Asia/Kolkata"
-        );
+align-items: center;
 
-}
- 
+flex: 1;
 
-}
+border-top:
+1px solid rgba(255, 255, 255, 0.12);
 
-function formatTime(
-date,
-timezone
-) {
-
- 
-return date.toLocaleTimeString(
-    "en-GB",
-    {
-        timeZone: timezone,
-
-        hour: "2-digit",
-
-        minute: "2-digit",
-
-        second: "2-digit",
-
-        hour12: false
-    }
-);
- 
+padding-top: 15px;
 
 }
 
-// ============================================================
-// WEATHER
-// ============================================================
+.timezone-item {
 
-function initializeWeather() {
+display: flex;
 
- 
-console.log(
-    "Initializing weather..."
-);
+flex-direction: column;
 
+align-items: center;
 
-if (!navigator.geolocation) {
+justify-content: center;
 
-    showWeatherError(
-        "Your browser does not support location services."
-    );
-
-    return;
+text-align: center;
 
 }
 
+.timezone-label {
 
-if (!window.isSecureContext) {
+display: block;
 
-    showWeatherError(
-        "Weather location requires HTTPS or localhost."
-    );
+font-size: 11px;
 
-    console.error(
-        "Geolocation requires HTTPS or localhost."
-    );
+color:
+rgba(255, 255, 255, 0.55);
 
-    return;
+letter-spacing: 1px;
 
-}
-
-
-requestUserLocation();
- 
+text-transform: uppercase;
 
 }
 
-function requestUserLocation() {
+.timezone-time {
 
- 
-console.log(
-    "Requesting user location..."
-);
+display: block;
 
+margin-top: 5px;
 
-showWeatherLoading();
+font-size: 18px;
 
+font-weight: 700;
 
-navigator.geolocation.getCurrentPosition(
+color: #ffffff;
 
-    function (position) {
-
-        console.log(
-            "Location permission granted."
-        );
-
-
-        const latitude =
-            position.coords.latitude;
-
-
-        const longitude =
-            position.coords.longitude;
-
-
-        console.log(
-            "Latitude:",
-            latitude
-        );
-
-
-        console.log(
-            "Longitude:",
-            longitude
-        );
-
-
-        getWeather(
-            latitude,
-            longitude
-        );
-
-    },
-
-
-    function (error) {
-
-        console.error(
-            "Location error:",
-            error
-        );
-
-
-        if (
-            error.code ===
-            1
-        ) {
-
-            showWeatherError(
-                "Location permission denied. Please allow location access."
-            );
-
-        }
-
-        else if (
-            error.code ===
-            2
-        ) {
-
-            showWeatherError(
-                "Unable to determine your location."
-            );
-
-        }
-
-        else if (
-            error.code ===
-            3
-        ) {
-
-            showWeatherError(
-                "Location request timed out."
-            );
-
-        }
-
-        else {
-
-            showWeatherError(
-                "Unable to get your location."
-            );
-
-        }
-
-    },
-
-
-    {
-
-        enableHighAccuracy: false,
-
-        timeout: 15000,
-
-        maximumAge: 300000
-
-    }
-
-);
- 
+font-family:
+"Consolas",
+"Courier New",
+monospace;
 
 }
 
-// ============================================================
-// GET WEATHER
-// ============================================================
+/* =========================================================
+WEATHER
+========================================================= */
 
-async function getWeather(
-latitude,
-longitude
-) {
+.weather-content {
 
- 
-console.log(
-    "Requesting weather data..."
-);
+flex: 1;
 
-
-try {
-
-    const url =
-        "https://api.open-meteo.com/v1/forecast" +
-        "?latitude=" + latitude +
-        "&longitude=" + longitude +
-        "&current=" +
-        "temperature_2m," +
-        "relative_humidity_2m," +
-        "apparent_temperature," +
-        "wind_speed_10m," +
-        "weather_code" +
-        "&timezone=auto";
-
-
-    console.log(
-        "Weather URL:",
-        url
-    );
-
-
-    const response =
-        await fetch(url);
-
-
-    if (!response.ok) {
-
-        throw new Error(
-            "Weather API HTTP " +
-            response.status
-        );
-
-    }
-
-
-    const data =
-        await response.json();
-
-
-    console.log(
-        "Weather data:",
-        data
-    );
-
-
-    displayWeather(data);
-
-
-    // Get readable city name
-
-    getCityName(
-        latitude,
-        longitude
-    );
-
-
-}
-catch (error) {
-
-    console.error(
-        "Weather request failed:",
-        error
-    );
-
-
-    showWeatherError(
-        "Unable to load weather data."
-    );
-
-}
- 
+width: 100%;
 
 }
 
-// ============================================================
-// DISPLAY WEATHER
-// ============================================================
+.weather-location {
 
-function displayWeather(data) {
+display: flex;
 
- 
-if (
-    !data ||
-    !data.current
-) {
+align-items: center;
 
-    showWeatherError(
-        "Weather information unavailable."
-    );
+justify-content: center;
 
-    return;
+gap: 5px;
 
-}
+font-size: 11px;
 
+color:
+rgba(255, 255, 255, 0.60);
 
-const weather =
-    data.current;
+margin-bottom: 5px;
 
+white-space: nowrap;
 
-// Temperature
+overflow: hidden;
 
-const temperature =
-    document.getElementById(
-        "weatherTemp"
-    );
-
-if (temperature) {
-
-    temperature.textContent =
-        Math.round(
-            weather.temperature_2m
-        ) + "°C";
+text-overflow: ellipsis;
 
 }
 
+.weather-location i {
 
-// Feels like
+color: #60a5fa;
 
-const feelsLike =
-    document.getElementById(
-        "feelsLike"
-    );
-
-if (feelsLike) {
-
-    feelsLike.textContent =
-        Math.round(
-            weather.apparent_temperature
-        ) + "°C";
+font-size: 11px;
 
 }
 
+/* =========================================================
+WEATHER MAIN
+========================================================= */
 
-// Humidity
+.weather-main {
 
-const humidity =
-    document.getElementById(
-        "humidity"
-    );
+display: flex;
 
-if (humidity) {
+align-items: center;
 
-    humidity.textContent =
-        weather.relative_humidity_2m +
-        "%";
+justify-content: center;
 
-}
-
-
-// Wind
-
-const wind =
-    document.getElementById(
-        "windSpeed"
-    );
-
-if (wind) {
-
-    wind.textContent =
-        Math.round(
-            weather.wind_speed_10m
-        ) + " km/h";
+gap: 12px;
 
 }
 
+.weather-icon {
 
-// Weather condition
+width: 42px;
 
-const weatherInfo =
-    getWeatherInfo(
-        weather.weather_code
-    );
+height: 42px;
 
+display: flex;
 
-const condition =
-    document.getElementById(
-        "weatherCondition"
-    );
+align-items: center;
 
-if (condition) {
+justify-content: center;
 
-    condition.textContent =
-        weatherInfo.description;
+font-size: 30px;
+
+color: #fbbf24;
 
 }
 
+.weather-temp {
 
-// Weather icon
+font-size: 25px;
 
-const icon =
-    document.getElementById(
-        "weatherIcon"
-    );
+font-weight: 700;
 
-if (icon) {
+line-height: 1;
 
-    icon.className =
-        "fa-solid " +
-        weatherInfo.icon;
+color: #ffffff;
 
 }
 
+.weather-condition {
 
-// Hide loading
+font-size: 11px;
 
-const loading =
-    document.getElementById(
-        "weatherLoading"
-    );
+color:
+rgba(255, 255, 255, 0.60);
 
-if (loading) {
-
-    loading.classList.add(
-        "d-none"
-    );
+margin-top: 5px;
 
 }
 
+/* =========================================================
+WEATHER DETAILS
+========================================================= */
 
-// Hide error
+.weather-details {
 
-const error =
-    document.getElementById(
-        "weatherError"
-    );
+display: grid;
 
-if (error) {
+grid-template-columns:
+repeat(3, 1fr);
 
-    error.classList.add(
-        "d-none"
-    );
+gap: 10px;
 
-}
+margin-top: 10px;
 
+padding-top: 10px;
 
-// Show weather
-
-const content =
-    document.getElementById(
-        "weatherContent"
-    );
-
-if (content) {
-
-    content.classList.remove(
-        "d-none"
-    );
-
-}
- 
+border-top:
+1px solid rgba(255, 255, 255, 0.10);
 
 }
 
-// ============================================================
-// WEATHER CODE
-// ============================================================
+.weather-details div {
 
-function getWeatherInfo(code) {
+display: flex;
 
-const weatherCodes = {
+flex-direction: column;
 
-    0: {
-        description: "Clear Sky",
-        icon: "fa-sun"
-    },
+align-items: center;
 
-    1: {
-        description: "Mainly Clear",
-        icon: "fa-cloud-sun"
-    },
+gap: 2px;
 
-    2: {
-        description: "Partly Cloudy",
-        icon: "fa-cloud-sun"
-    },
+}
 
-    3: {
-        description: "Overcast",
-        icon: "fa-cloud"
-    },
+.weather-details span {
 
-    45: {
-        description: "Fog",
-        icon: "fa-smog"
-    },
+font-size: 9px;
 
-    48: {
-        description: "Fog",
-        icon: "fa-smog"
-    },
+color:
+rgba(255, 255, 255, 0.45);
 
-    51: {
-        description: "Light Drizzle",
-        icon: "fa-cloud-rain"
-    },
+}
 
-    53: {
-        description: "Drizzle",
-        icon: "fa-cloud-rain"
-    },
+.weather-details strong {
 
-    55: {
-        description: "Heavy Drizzle",
-        icon: "fa-cloud-rain"
-    },
+font-size: 11px;
 
-    61: {
-        description: "Light Rain",
-        icon: "fa-cloud-rain"
-    },
+font-weight: 600;
 
-    63: {
-        description: "Rain",
-        icon: "fa-cloud-showers-heavy"
-    },
+color: #ffffff;
 
-    65: {
-        description: "Heavy Rain",
-        icon: "fa-cloud-showers-heavy"
-    },
+}
 
-    71: {
-        description: "Light Snow",
-        icon: "fa-snowflake"
-    },
+/* =========================================================
+WEATHER STATUS / LOADING / ERROR
+========================================================= */
 
-    73: {
-        description: "Snow",
-        icon: "fa-snowflake"
-    },
+.weather-status {
 
-    75: {
-        description: "Heavy Snow",
-        icon: "fa-snowflake"
-    },
+flex: 1;
 
-    80: {
-        description: "Rain Showers",
-        icon: "fa-cloud-showers-heavy"
-    },
+display: flex;
 
-    81: {
-        description: "Rain Showers",
-        icon: "fa-cloud-showers-heavy"
-    },
+align-items: center;
 
-    82: {
-        description: "Heavy Rain Showers",
-        icon: "fa-cloud-showers-heavy"
-    },
+justify-content: center;
 
-    95: {
-        description: "Thunderstorm",
-        icon: "fa-cloud-bolt"
-    },
+text-align: center;
 
-    96: {
-        description: "Thunderstorm with Hail",
-        icon: "fa-cloud-bolt"
-    },
+font-size: 12px;
 
-    99: {
-        description: "Thunderstorm with Heavy Hail",
-        icon: "fa-cloud-bolt"
-    }
+color:
+rgba(255, 255, 255, 0.65);
 
-};
+}
 
+.weather-status > i {
 
-return (
-    weatherCodes[code] || {
-        description: "Unknown",
-        icon: "fa-cloud"
-    }
+color: #60a5fa;
+
+}
+
+.weather-status .fa-location-crosshairs {
+
+display: block;
+
+font-size: 20px;
+
+}
+
+.weather-status button {
+
+border-radius: 8px;
+
+font-size: 11px;
+
+}
+
+/* =========================================================
+GENERAL CARD ANIMATION
+========================================================= */
+
+@keyframes fadeUp {
+
+from {
+
+  
+opacity: 0;
+
+transform:
+  translateY(35px);
+  
+
+}
+
+to {
+
+  
+opacity: 1;
+
+transform:
+  translateY(0);
+  
+
+}
+
+}
+
+/* =========================================================
+SECTION
+========================================================= */
+
+.section-title {
+
+font-weight: 700;
+
+margin-bottom: 35px;
+
+position: relative;
+
+}
+
+.section-title::after {
+
+content: "";
+
+width: 80px;
+
+height: 4px;
+
+background:
+var(--primary);
+
+position: absolute;
+
+left: 0;
+
+bottom: -12px;
+
+border-radius: 20px;
+
+}
+
+/* =========================================================
+ICON BOX
+========================================================= */
+
+.icon-box {
+
+width: 70px;
+
+height: 70px;
+
+border-radius: 18px;
+
+background:
+linear-gradient(
+135deg,
+#2563eb,
+#60a5fa
 );
 
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+color: #ffffff;
+
+font-size: 28px;
+
+margin-bottom: 20px;
 
 }
 
-// ============================================================
-// GET CITY NAME
-// ============================================================
+/* =========================================================
+BUTTON
+========================================================= */
 
-async function getCityName(
-latitude,
-longitude
-) {
+.btn-custom {
 
-try {
+border-radius: 12px;
 
-    const url =
-        "https://nominatim.openstreetmap.org/reverse" +
-        "?lat=" + latitude +
-        "&lon=" + longitude +
-        "&format=json";
+font-weight: 600;
 
-
-    const response =
-        await fetch(url);
-
-
-    if (!response.ok) {
-
-        throw new Error(
-            "Reverse geocoding failed."
-        );
-
-    }
-
-
-    const data =
-        await response.json();
-
-
-    const address =
-        data.address || {};
-
-
-    const city =
-        address.city ||
-        address.town ||
-        address.village ||
-        address.municipality ||
-        address.county ||
-        "Current Location";
-
-
-    const country =
-        address.country ||
-        "";
-
-
-    const location =
-        document.getElementById(
-            "weatherLocation"
-        );
-
-
-    if (location) {
-
-        location.textContent =
-            country
-                ? city + ", " + country
-                : city;
-
-    }
-
-}
-catch (error) {
-
-    console.warn(
-        "Could not determine city name:",
-        error
-    );
-
-
-    const location =
-        document.getElementById(
-            "weatherLocation"
-        );
-
-
-    if (location) {
-
-        location.textContent =
-            "Current Location";
-
-    }
+padding: 10px 18px;
 
 }
 
+/* =========================================================
+TEXT
+========================================================= */
+
+.sub-text {
+
+color: var(--sub-text);
 
 }
 
-// ============================================================
-// WEATHER LOADING
-// ============================================================
+/* =========================================================
+URL BOX
+========================================================= */
 
-function showWeatherLoading() {
+.url-box {
 
+display: flex;
 
-const loading =
-    document.getElementById(
-        "weatherLoading"
-    );
+gap: 10px;
 
-const content =
-    document.getElementById(
-        "weatherContent"
-    );
-
-const error =
-    document.getElementById(
-        "weatherError"
-    );
-
-
-if (loading) {
-
-    loading.classList.remove(
-        "d-none"
-    );
+margin-top: 15px;
 
 }
 
+.url-input {
 
-if (content) {
+font-size: 12px;
 
-    content.classList.add(
-        "d-none"
-    );
+border-radius: 10px;
 
-}
+background:
+rgba(255, 255, 255, 0.08) !important;
 
-
-if (error) {
-
-    error.classList.add(
-        "d-none"
-    );
+color:
+var(--text-color) !important;
 
 }
 
+.url-input:focus {
+
+box-shadow: none;
+
+border-color:
+var(--primary);
 
 }
 
-// ============================================================
-// WEATHER ERROR
-// ============================================================
+.copy-btn {
 
-function showWeatherError(
-message
-) {
+border-radius: 10px;
 
-
-console.error(
-    "Weather:",
-    message
-);
-
-
-const loading =
-    document.getElementById(
-        "weatherLoading"
-    );
-
-const content =
-    document.getElementById(
-        "weatherContent"
-    );
-
-const error =
-    document.getElementById(
-        "weatherError"
-    );
-
-const errorMessage =
-    document.getElementById(
-        "weatherErrorMessage"
-    );
-
-
-if (loading) {
-
-    loading.classList.add(
-        "d-none"
-    );
+min-width: 45px;
 
 }
 
+.copy-btn.copied {
 
-if (content) {
+background: #198754;
 
-    content.classList.add(
-        "d-none"
-    );
+border-color: #198754;
 
-}
-
-
-if (error) {
-
-    error.classList.remove(
-        "d-none"
-    );
+color: #ffffff;
 
 }
 
+/* =========================================================
+MOBILE
+========================================================= */
 
-if (errorMessage) {
+@media (max-width: 768px) {
 
-    errorMessage.textContent =
-        message;
+.hero-section {
+
+  
+padding: 40px 0;
+  
+
+}
+
+.dashboard-title {
+
+  
+font-size: 2rem;
+  
+
+}
+
+.glass-card {
+
+  
+padding: 20px;
+  
+
+}
+
+.icon-box {
+
+  
+width: 60px;
+
+height: 60px;
+
+font-size: 24px;
+  
+
+}
+
+.dashboard-info-row {
+
+  
+grid-template-columns: 1fr;
+  
+
+}
+
+.dashboard-info-card {
+
+  
+min-height: 150px;
+  
+
+}
+
+}
+
+/* =========================================================
+SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+.dashboard-title {
+
+  
+font-size: 1.7rem;
+  
+
+}
+
+.timezone-time {
+
+  
+font-size: 16px;
+  
+
+}
+
+.weather-temp {
+
+  
+font-size: 23px;
+  
+
+}
+
+.weather-details {
+
+  
+gap: 5px;
+  
+
+}
+
+.weather-details strong {
+
+  
+font-size: 10px;
+  
+
+}
+
+.navbar-custom {
+
+  
+padding:
+  10px 0;
+  
 
 }
 
