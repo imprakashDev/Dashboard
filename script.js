@@ -1,20 +1,54 @@
-// ================================
-// DARK MODE
-// ================================
+// ======================================================
+// DASHBOARD SCRIPT
+// ======================================================
 
-const themeToggle = document.getElementById("themeToggle");
-
-if (themeToggle) {
+document.addEventListener("DOMContentLoaded", function () {
 
 ```
-themeToggle.addEventListener("click", () => {
+// Initialize all dashboard features
+initializeTheme();
+initializeTypewriter();
+updateWorldClock();
+loadWeather();
+
+// Update clock every second
+setInterval(updateWorldClock, 1000);
+
+// Refresh weather every 15 minutes
+setInterval(loadWeather, 15 * 60 * 1000);
+```
+
+});
+
+// ======================================================
+// DARK MODE
+// ======================================================
+
+function initializeTheme() {
+
+```
+const themeToggle =
+    document.getElementById("themeToggle");
+
+if (!themeToggle) {
+    console.warn("Theme button not found.");
+    return;
+}
+
+themeToggle.addEventListener("click", function () {
 
     document.body.classList.toggle("dark-mode");
 
-    if (document.body.classList.contains("dark-mode")) {
+    if (
+        document.body.classList.contains("dark-mode")
+    ) {
+
         themeToggle.innerHTML = "☀️";
+
     } else {
+
         themeToggle.innerHTML = "🌙";
+
     }
 
 });
@@ -22,69 +56,97 @@ themeToggle.addEventListener("click", () => {
 
 }
 
-// ================================
+// ======================================================
 // COPY URL
-// ================================
+// ======================================================
 
 function copyUrl(button) {
 
 ```
+if (!button) return;
+
 const input =
-    button.parentElement.querySelector(".url-input");
+    button.parentElement.querySelector(
+        ".url-input"
+    );
 
 if (!input) return;
 
-navigator.clipboard.writeText(input.value)
-    .then(() => {
 
-        const originalHtml = button.innerHTML;
+navigator.clipboard
+    .writeText(input.value)
+    .then(function () {
+
+        const originalHtml =
+            button.innerHTML;
 
         button.innerHTML =
             '<i class="fa-solid fa-check"></i>';
 
         button.classList.add("copied");
 
-        setTimeout(() => {
 
-            button.innerHTML = originalHtml;
+        setTimeout(function () {
 
-            button.classList.remove("copied");
+            button.innerHTML =
+                originalHtml;
+
+            button.classList.remove(
+                "copied"
+            );
 
         }, 1500);
 
     })
-    .catch(error => {
+    .catch(function (error) {
 
-        console.error("Copy failed:", error);
+        console.error(
+            "Copy failed:",
+            error
+        );
 
     });
 ```
 
 }
 
-// ================================
+// ======================================================
 // TYPEWRITER
-// ================================
+// ======================================================
 
-document.addEventListener("DOMContentLoaded", function () {
+function initializeTypewriter() {
 
 ```
 const typedTextSpan =
-    document.querySelector(".typed-text");
+    document.querySelector(
+        ".typed-text"
+    );
 
-if (!typedTextSpan) return;
+if (!typedTextSpan) {
+    return;
+}
+
 
 const textArray = [
+
     "Hi, Prakash 👋",
+
     "Welcome to Dashboard",
+
     "Manage Everything Faster"
+
 ];
 
+
 const typingDelay = 100;
+
 const erasingDelay = 50;
+
 const newTextDelay = 2000;
 
+
 let textArrayIndex = 0;
+
 let charIndex = 0;
 
 
@@ -96,17 +158,25 @@ function type() {
     ) {
 
         typedTextSpan.textContent +=
-            textArray[textArrayIndex].charAt(charIndex);
+            textArray[textArrayIndex]
+                .charAt(charIndex);
 
         charIndex++;
 
-        setTimeout(type, typingDelay);
+        setTimeout(
+            type,
+            typingDelay
+        );
 
     } else {
 
-        setTimeout(erase, newTextDelay);
+        setTimeout(
+            erase,
+            newTextDelay
+        );
 
     }
+
 }
 
 
@@ -115,14 +185,18 @@ function erase() {
     if (charIndex > 0) {
 
         typedTextSpan.textContent =
-            textArray[textArrayIndex].substring(
-                0,
-                charIndex - 1
-            );
+            textArray[textArrayIndex]
+                .substring(
+                    0,
+                    charIndex - 1
+                );
 
         charIndex--;
 
-        setTimeout(erase, erasingDelay);
+        setTimeout(
+            erase,
+            erasingDelay
+        );
 
     } else {
 
@@ -143,102 +217,126 @@ function erase() {
         );
 
     }
+
 }
 
 
 type();
 ```
 
-});
+}
 
-// ================================
+// ======================================================
 // WORLD CLOCK
-// ================================
+// ======================================================
 
 function updateWorldClock() {
 
 ```
 const now = new Date();
 
-const utcTime =
-    document.getElementById("utcTime");
 
-const jstTime =
-    document.getElementById("jstTime");
+const utcElement =
+    document.getElementById(
+        "utcTime"
+    );
 
-const istTime =
-    document.getElementById("istTime");
+const jstElement =
+    document.getElementById(
+        "jstTime"
+    );
+
+const istElement =
+    document.getElementById(
+        "istTime"
+    );
 
 
-if (utcTime) {
+// UTC
 
-    utcTime.textContent =
-        now.toLocaleTimeString("en-GB", {
-            timeZone: "UTC",
-            hour12: false
-        });
+if (utcElement) {
+
+    utcElement.textContent =
+        now.toLocaleTimeString(
+            "en-GB",
+            {
+                timeZone: "UTC",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: false
+            }
+        );
 
 }
 
 
-if (jstTime) {
+// JST - Japan
 
-    jstTime.textContent =
-        now.toLocaleTimeString("en-GB", {
-            timeZone: "Asia/Tokyo",
-            hour12: false
-        });
+if (jstElement) {
+
+    jstElement.textContent =
+        now.toLocaleTimeString(
+            "en-GB",
+            {
+                timeZone: "Asia/Tokyo",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: false
+            }
+        );
 
 }
 
 
-if (istTime) {
+// IST - India
 
-    istTime.textContent =
-        now.toLocaleTimeString("en-GB", {
-            timeZone: "Asia/Kolkata",
-            hour12: false
-        });
+if (istElement) {
+
+    istElement.textContent =
+        now.toLocaleTimeString(
+            "en-GB",
+            {
+                timeZone: "Asia/Kolkata",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: false
+            }
+        );
 
 }
 ```
 
 }
 
-updateWorldClock();
-
-setInterval(updateWorldClock, 1000);
-
-// ================================
+// ======================================================
 // WEATHER
-// ================================
+// ======================================================
 
-async function loadWeather() {
+function loadWeather() {
 
 ```
+console.log(
+    "Starting weather request..."
+);
+
+
 const loading =
-    document.getElementById("weatherLoading");
+    document.getElementById(
+        "weatherLoading"
+    );
 
 const content =
-    document.getElementById("weatherContent");
+    document.getElementById(
+        "weatherContent"
+    );
 
 const error =
-    document.getElementById("weatherError");
-
-
-// Reset UI
-
-if (loading) {
-    loading.classList.remove("d-none");
-}
-
-if (content) {
-    content.classList.add("d-none");
-}
-
-if (error) {
-    error.classList.add("d-none");
-}
+    document.getElementById(
+        "weatherError"
+    );
 
 
 // Check browser support
@@ -250,10 +348,11 @@ if (!navigator.geolocation) {
     );
 
     return;
+
 }
 
 
-// Check HTTPS / localhost
+// Check secure context
 
 if (!window.isSecureContext) {
 
@@ -266,21 +365,43 @@ if (!window.isSecureContext) {
     );
 
     return;
+
+}
+
+
+// Show loading
+
+if (loading) {
+    loading.classList.remove(
+        "d-none"
+    );
+}
+
+if (content) {
+    content.classList.add(
+        "d-none"
+    );
+}
+
+if (error) {
+    error.classList.add(
+        "d-none"
+    );
 }
 
 
 console.log(
-    "Requesting user's location..."
+    "Requesting browser location..."
 );
 
 
 navigator.geolocation.getCurrentPosition(
 
-    // ============================
-    // LOCATION SUCCESS
-    // ============================
+    // ==========================================
+    // SUCCESS
+    // ==========================================
 
-    async function (position) {
+    function (position) {
 
         const latitude =
             position.coords.latitude;
@@ -290,21 +411,13 @@ navigator.geolocation.getCurrentPosition(
 
 
         console.log(
-            "Location permission granted."
-        );
-
-        console.log(
-            "Latitude:",
-            latitude
-        );
-
-        console.log(
-            "Longitude:",
+            "Location received:",
+            latitude,
             longitude
         );
 
 
-        await fetchWeather(
+        fetchWeather(
             latitude,
             longitude
         );
@@ -312,67 +425,73 @@ navigator.geolocation.getCurrentPosition(
     },
 
 
-    // ============================
-    // LOCATION ERROR
-    // ============================
+    // ==========================================
+    // ERROR
+    // ==========================================
 
-    function (error) {
+    function (geoError) {
 
         console.error(
             "Geolocation error:",
-            error.code,
-            error.message
+            geoError
         );
 
 
-        switch (error.code) {
+        if (
+            geoError.code ===
+            geoError.PERMISSION_DENIED
+        ) {
 
-            case error.PERMISSION_DENIED:
+            showWeatherError(
+                "Location permission denied. Please allow location access."
+            );
 
-                showWeatherError(
-                    "Location permission was denied. Please allow location access and try again."
-                );
+        }
 
-                break;
+        else if (
+            geoError.code ===
+            geoError.POSITION_UNAVAILABLE
+        ) {
 
+            showWeatherError(
+                "Unable to determine your location."
+            );
 
-            case error.POSITION_UNAVAILABLE:
+        }
 
-                showWeatherError(
-                    "Unable to determine your location."
-                );
+        else if (
+            geoError.code ===
+            geoError.TIMEOUT
+        ) {
 
-                break;
+            showWeatherError(
+                "Location request timed out. Please try again."
+            );
 
+        }
 
-            case error.TIMEOUT:
+        else {
 
-                showWeatherError(
-                    "Location request timed out. Please try again."
-                );
-
-                break;
-
-
-            default:
-
-                showWeatherError(
-                    "Unable to get your location."
-                );
+            showWeatherError(
+                "Unable to get your location."
+            );
 
         }
 
     },
 
 
-    // ============================
-    // LOCATION OPTIONS
-    // ============================
+    // ==========================================
+    // OPTIONS
+    // ==========================================
 
     {
         enableHighAccuracy: false,
+
         timeout: 15000,
+
         maximumAge: 300000
+
     }
 
 );
@@ -380,9 +499,9 @@ navigator.geolocation.getCurrentPosition(
 
 }
 
-// ================================
-// FETCH WEATHER
-// ================================
+// ======================================================
+// FETCH WEATHER FROM OPEN-METEO
+// ======================================================
 
 async function fetchWeather(
 latitude,
@@ -393,16 +512,27 @@ longitude
 try {
 
     console.log(
-        "Fetching weather..."
+        "Fetching weather data..."
     );
 
 
     const weatherUrl =
-        `https://api.open-meteo.com/v1/forecast` +
-        `?latitude=${latitude}` +
-        `&longitude=${longitude}` +
-        `&current=temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weather_code` +
-        `&timezone=auto`;
+        "https://api.open-meteo.com/v1/forecast" +
+        "?latitude=" + latitude +
+        "&longitude=" + longitude +
+        "&current=" +
+        "temperature_2m," +
+        "relative_humidity_2m," +
+        "apparent_temperature," +
+        "wind_speed_10m," +
+        "weather_code" +
+        "&timezone=auto";
+
+
+    console.log(
+        "Weather API:",
+        weatherUrl
+    );
 
 
     const response =
@@ -412,7 +542,8 @@ try {
     if (!response.ok) {
 
         throw new Error(
-            `Weather API returned ${response.status}`
+            "Weather API returned HTTP " +
+            response.status
         );
 
     }
@@ -423,7 +554,7 @@ try {
 
 
     console.log(
-        "Weather API response:",
+        "Weather data received:",
         data
     );
 
@@ -431,24 +562,25 @@ try {
     updateWeather(data);
 
 
-    // Get city / country
+    // Reverse geocoding
 
-    await getLocationName(
+    getLocationName(
         latitude,
         longitude
     );
+
 
 }
 catch (error) {
 
     console.error(
-        "Weather API Error:",
+        "Weather API error:",
         error
     );
 
 
     showWeatherError(
-        "Unable to load weather information."
+        "Unable to load weather data."
     );
 
 }
@@ -456,9 +588,9 @@ catch (error) {
 
 }
 
-// ================================
-// UPDATE WEATHER CARD
-// ================================
+// ======================================================
+// UPDATE WEATHER UI
+// ======================================================
 
 function updateWeather(data) {
 
@@ -473,6 +605,7 @@ if (
     );
 
     return;
+
 }
 
 
@@ -490,9 +623,9 @@ const temperature =
 if (temperature) {
 
     temperature.textContent =
-        `${Math.round(
+        Math.round(
             current.temperature_2m
-        )}°C`;
+        ) + "°C";
 
 }
 
@@ -507,9 +640,9 @@ const feelsLike =
 if (feelsLike) {
 
     feelsLike.textContent =
-        `${Math.round(
+        Math.round(
             current.apparent_temperature
-        )}°C`;
+        ) + "°C";
 
 }
 
@@ -524,29 +657,30 @@ const humidity =
 if (humidity) {
 
     humidity.textContent =
-        `${current.relative_humidity_2m}%`;
+        current.relative_humidity_2m +
+        "%";
 
 }
 
 
 // Wind
 
-const windSpeed =
+const wind =
     document.getElementById(
         "windSpeed"
     );
 
-if (windSpeed) {
+if (wind) {
 
-    windSpeed.textContent =
-        `${Math.round(
+    wind.textContent =
+        Math.round(
             current.wind_speed_10m
-        )} km/h`;
+        ) + " km/h";
 
 }
 
 
-// Weather condition
+// Weather description
 
 const weather =
     getWeatherDescription(
@@ -577,47 +711,65 @@ const icon =
 if (icon) {
 
     icon.className =
-        `fa-solid ${weather.icon}`;
+        "fa-solid " +
+        weather.icon;
 
 }
 
 
-// Show weather
+// Hide loading
 
 const loading =
     document.getElementById(
         "weatherLoading"
     );
 
+if (loading) {
+
+    loading.classList.add(
+        "d-none"
+    );
+
+}
+
+
+// Hide error
+
 const error =
     document.getElementById(
         "weatherError"
     );
+
+if (error) {
+
+    error.classList.add(
+        "d-none"
+    );
+
+}
+
+
+// Show content
 
 const content =
     document.getElementById(
         "weatherContent"
     );
 
-
-if (loading) {
-    loading.classList.add("d-none");
-}
-
-if (error) {
-    error.classList.add("d-none");
-}
-
 if (content) {
-    content.classList.remove("d-none");
+
+    content.classList.remove(
+        "d-none"
+    );
+
 }
 ```
 
 }
 
-// ================================
-// GET CITY NAME
-// ================================
+// ======================================================
+// REVERSE GEOCODING
+// ======================================================
 
 async function getLocationName(
 latitude,
@@ -628,24 +780,20 @@ longitude
 try {
 
     const url =
-        `https://nominatim.openstreetmap.org/reverse` +
-        `?lat=${latitude}` +
-        `&lon=${longitude}` +
-        `&format=json`;
+        "https://nominatim.openstreetmap.org/reverse" +
+        "?lat=" + latitude +
+        "&lon=" + longitude +
+        "&format=json";
 
 
     const response =
-        await fetch(url, {
-            headers: {
-                "Accept": "application/json"
-            }
-        });
+        await fetch(url);
 
 
     if (!response.ok) {
 
         throw new Error(
-            "Location API failed."
+            "Location lookup failed."
         );
 
     }
@@ -683,7 +831,7 @@ try {
 
         location.textContent =
             country
-                ? `${city}, ${country}`
+                ? city + ", " + country
                 : city;
 
     }
@@ -715,9 +863,9 @@ catch (error) {
 
 }
 
-// ================================
-// WEATHER DESCRIPTION
-// ================================
+// ======================================================
+// WEATHER CODE → DESCRIPTION + ICON
+// ======================================================
 
 function getWeatherDescription(code) {
 
@@ -769,16 +917,6 @@ const weatherMap = {
         icon: "fa-cloud-rain"
     },
 
-    56: {
-        description: "Freezing Drizzle",
-        icon: "fa-cloud-rain"
-    },
-
-    57: {
-        description: "Heavy Freezing Drizzle",
-        icon: "fa-cloud-rain"
-    },
-
     61: {
         description: "Light Rain",
         icon: "fa-cloud-rain"
@@ -792,16 +930,6 @@ const weatherMap = {
     65: {
         description: "Heavy Rain",
         icon: "fa-cloud-showers-heavy"
-    },
-
-    66: {
-        description: "Freezing Rain",
-        icon: "fa-cloud-rain"
-    },
-
-    67: {
-        description: "Heavy Freezing Rain",
-        icon: "fa-cloud-rain"
     },
 
     71: {
@@ -857,19 +985,19 @@ const weatherMap = {
 };
 
 
-return weatherMap[code] || {
-
-    description: "Unknown",
-    icon: "fa-cloud"
-
-};
+return (
+    weatherMap[code] || {
+        description: "Unknown",
+        icon: "fa-cloud"
+    }
+);
 ```
 
 }
 
-// ================================
+// ======================================================
 // WEATHER ERROR
-// ================================
+// ======================================================
 
 function showWeatherError(message) {
 
@@ -896,16 +1024,31 @@ const errorMessage =
 
 
 if (loading) {
-    loading.classList.add("d-none");
+
+    loading.classList.add(
+        "d-none"
+    );
+
 }
+
 
 if (content) {
-    content.classList.add("d-none");
+
+    content.classList.add(
+        "d-none"
+    );
+
 }
 
+
 if (error) {
-    error.classList.remove("d-none");
+
+    error.classList.remove(
+        "d-none"
+    );
+
 }
+
 
 if (errorMessage) {
 
@@ -916,29 +1059,3 @@ if (errorMessage) {
 ```
 
 }
-
-// ================================
-// INITIALIZE WEATHER
-// ================================
-
-document.addEventListener(
-"DOMContentLoaded",
-function () {
-
-```
-    loadWeather();
-
-}
-```
-
-);
-
-// ================================
-// REFRESH WEATHER
-// Every 15 minutes
-// ================================
-
-setInterval(
-loadWeather,
-15 * 60 * 1000
-);
